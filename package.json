@@ -1,0 +1,32 @@
+{
+  "name": "node-restify-mongodb",
+  "version": "0.0.0",
+  "description": "A basic RESTful CRUD API service, based on Node, Restify, and MongoDB",
+  "author": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js | ./node_modules/bunyan/bin/bunyan",
+    "test": "grunt test"
+  },
+  "dependencies": {
+    "bunyan": "^1.8.1",
+    "dotenv": "^2.0.0",
+    "mongoose": "^4.4.20",
+    "mongoose-currency": "^0.2.0",
+    "mongoose-unique-validator": "^1.0.2",
+    "npm": "^3.10.8",
+    "restify": "^4.1.0"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-exec": "^1.0.0",
+    "grunt-mocha-istanbul": "^5.0.1",
+    "grunt-mongoimport": "^0.1.7",
+    "istanbul": "^0.4.4",
+    "jasmine-node": "^1.14.5",
+    "jshint": "^2.9.2",
+    "mocha": "^2.5.3",
+    "request": "^2.72.0",
+    "should": "^9.0.2"
+  }
+}
