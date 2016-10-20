@@ -1,15 +1,14 @@
 {
-  "name": "node-restify-mongodb",
-  "version": "0.0.0",
-  "description": "A basic RESTful CRUD API service, based on Node, Restify, and MongoDB",
-  "author": "",
+  "name": "readme-shield",
+  "version": "1.0.0",
+  "description": "A RESTful API service to track your GitHub README.md shield/badge vs npm's recent release version.  NodeJS, Redis, Shields.io as badge provider.",
+  "author": "June07",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js | ./node_modules/bunyan/bin/bunyan",
+    "start": "node app.js",
     "test": "grunt test"
   },
   "dependencies": {
-    "bunyan": "^1.8.1",
     "dotenv": "^2.0.0",
     "jsonschema": "^1.1.0",
     "mongoose": "^4.4.20",
