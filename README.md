@@ -14,4 +14,4 @@ Examples of what the shilds look like when the readme is current with GitHub and
 
 ## License
 
-MIT © [June07](https://github.com/june07)
+MIT &#169; [June07](https://github.com/june07)
