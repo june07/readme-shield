@@ -68,6 +68,26 @@ var config = {
     },
     redis: {
       url: process.env.REDIS_URL
+    },
+    shield: {
+      providers: { shieldsio: { url: "https://img.shields.io/badge/" }}
+    },
+    badge: {
+      type: {
+        readme: { name: "readme", svg: "" }
+      }
+    },
+    messages: {
+      params: {
+        coder: [
+          "You need to provide a coder parameter in any of the following forms: [ <GitHub user> | { GitHub: \"<GitHub user>\" } | { GitHub: \"<GitHub user>\", npm: \"<npm user>\" } ]",
+          "Wrong format used for coder parameter."
+        ],
+        repo: [
+          "You need to provide a repo parameter in any of the following forms: [ <GitHub repo> | <{ GitHub: \"repo\" }> | <{ GitHub: \"repo\", npm: \"repo\" }> ]",
+          "Wrong format used for repo parameter."
+        ]
+      }
     }
   }
 };
