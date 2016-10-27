@@ -1,7 +1,6 @@
 var diff = require("diff"),
 	npm = require("npm"),
 	https = require('https'),
-	restify = require('restify'),
 	path = require('path'),
 	Promise = require('bluebird'),
 
@@ -47,8 +46,9 @@ var ShieldController = (function() {
 				  	if (err) reject(err);
 				  	if (reply) {
 				  		shield = reply;
+				  		shield.sentcache = true;
 				  		resolve(shield);
-					  	return callback(null, shield.markdown);
+					  	return callback(null, shield);
 						}
 						resolve(shield);
 				  });
@@ -67,11 +67,8 @@ var ShieldController = (function() {
 			  })
 			  .then(function(shield) {
 			  	/* Generate the badge and return the proper markdown **/
-			  	console.log("HEREREREE00: ");
 			  	self.generateBadge(shield, function(shield) {
-						//cache.putCache(shield);			
-						console.log("HEREREREE11: ");
-						console.dir(shield);
+						cache.putCache(shield);			
 						callback(null, shield);
 			  	});
 			  });
@@ -84,6 +81,15 @@ var ShieldController = (function() {
 				var difference = diff.diffLines(github, npm);
 				var diffs = []; /** [ { num: 1, added: "+changeObject.value", removed: "-changeObject.value"},
 				  														{ num: 2, added: "+changeObject.value", removed: "-changeObject.value"}, ... ] */
+				var BadgeChanges = function(shield) {
+					changes: null,			// the number of changes that exist currently
+					commits: null,			// the number of commits since last current
+					date: null;		// date of last change
+					diffs: [];
+					function compare() {
+							if (! shield.changes.includes(diffs.toString()) && diffs.length > 0) {
+							}
+				}
 		  	difference.forEach(function(changeObject, i) {
 		  		// For every line difference
 		  		var line = {};
@@ -112,9 +118,7 @@ var ShieldController = (function() {
 					// diff();
 					var coder = shield.coder,
 						repo = shield.repo,
-						branches = shield.branch;
-					if (! branches)
-						branches = [ "master", "devel" ];
+						branches = shield.branches;
 					branches.every(function(branch) {
 						self.httpGet('https://raw.githubusercontent.com/'+coder.GitHub+'/'+repo+'/'+branch+'/README.md', function(status, response) {
 							if (status !== 404) {
@@ -169,11 +173,15 @@ var ShieldController = (function() {
 				}
 				this.httpGet(provider.url+subject+"-"+status+"-"+color+".svg", function(status, response) {
 					shield.markdown = response;
-					return callback(shield);
+					cache.putCache(shield);
+					if (shield.sentcache)
+						shield.sentcache = false;
+					else
+						return callback(shield);
 				});
 			},
 			httpGet: function(url, cb) {
-				var url = require('url').parse(url);
+				var url;
 				var headers = { 'Cache-Control':'no-cache' };
 				Object.assign(url, headers);
 				https.get(url, (res) => {

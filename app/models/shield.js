@@ -11,9 +11,10 @@ var Shield = function(coder, repo, badge, provider, changes, callback) {
 	self.schema = { "type": "string", "type": "string" };
 	self.changes = changes ? changes: [];
 	self.coder = coder ? coder : { "GitHub": "June07", "npm": "667" };
-	self.repo = repo ? repo : 'ansible-dynamic-inventory';
+	self.repo = repo ? repo : "ansible-dynamic-inventory";
+	self.branches = self.repo.split(" ")[1] ? self.repo.split()[1].split(",") : [ "master", "devel" ];
 	self.badge = badge ? badge : config.badge.type.readme;
-	self.provider = provider ? provider : config.shield.providers.shieldio;
+	self.provider = provider ? provider : config.shield.providers.shieldsio.name;
 	self.id = JSON.stringify(coder)+" "+repo;
 
 	if (! coder && callback) { callback(new restify.InvalidArgumentError(config.messages.params.coder[0])); return false; }
@@ -29,7 +30,15 @@ var Shield = function(coder, repo, badge, provider, changes, callback) {
 Shield.prototype.retrieve = function(coder, repo, badge, provider, callback) {
 	return this;
 }
-Shield.prototype.update = function() {}
+Shield.prototype.update = function(coder, repo, badge, provider, markdown, changed) {
+	this.coder = coder;
+	this.repo = repo;
+	this.badge = badge;
+	this.provider = provider;
+	this.markdown = markdown;
+	this.changed = changed;
+	return this;
+}
 Shield.prototype.updateDiffs = function(diffs) {
 	this.changes.push(diffs.toString());
 	this.changed = true;

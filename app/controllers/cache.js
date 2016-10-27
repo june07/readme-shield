@@ -15,21 +15,25 @@ var cacheSingleton = module.exports = (function() {
 			putCache: function(shield) {
 				var id = JSON.stringify(shield.coder)+" "+shield.repo;
 				var changesString = shield.changes.toString();
+				redisClient.hset(id, "branches", shield.branches.toString(), redis.print);
 				redisClient.hset(id, "changes", changesString, redis.print);
 				redisClient.hset(id, "badge", JSON.stringify(shield.badge), redis.print);
 				redisClient.hset(id, "provider", JSON.stringify(shield.provider), redis.print);
+				redisClient.hset(id, "markdown", shield.markdown, redis.print);
+				redisClient.hset(id, "changed", shield.changed, redis.print)
 			},
 			getCache: function(shield, callback) {
 				redisClient.hgetall(shield.id, function(err, reply) {
 					if (err) console.log(err);
 					if (reply) {
-						var coder = JSON.stringify(id.split(" ")[0]);
-						var repo = id.split(" ")[1];
-						var changes = reply.changes;
-						var badge = JSON.stringify(reply.badge);
-						var provider = JSON.stringify(reply.provider);
-						shield.update(coder, repo, badge, provider, changes);
-						callback(null, shield);
+						var coder = JSON.parse(shield.id.split(" ")[0]);
+						var repo = shield.id.split(" ")[1];
+						var branches = reply.branches.split(",");
+						var badge = JSON.parse(reply.badge);
+						var provider = JSON.parse(reply.provider);
+						var markdown = reply.markdown;
+						var changed = reply.changed;
+						callback(null, shield.update(coder, repo, badge, provider, markdown, changed));
 					}
 					else callback(null, null);
 				});

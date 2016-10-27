@@ -18,8 +18,8 @@ module.exports = function (server) {
     shieldController.getShield(coder, repo, null, null, [], function(err, shield) {
       if (err) { console.log(err.message); return next(); }
       console.dir(shield);
-      process.exit();
-      res.send(200, shield.markdown);
+      if (shield)
+        res.send(200, shield.markdown);
       return next();
     });
   });

@@ -70,7 +70,7 @@ var config = {
       url: process.env.REDIS_URL
     },
     shield: {
-      providers: { shieldsio: { url: "https://img.shields.io/badge/" }}
+      providers: { shieldsio: { name: "shields.io", url: "https://img.shields.io/badge/" }}
     },
     badge: {
       type: {

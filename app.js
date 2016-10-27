@@ -19,7 +19,6 @@ var server = restify.createServer({
         res.statusCode = body.statusCode || 500;
         body = body.message;
       } else if (body && body.toString().includes("<svg") && body.toString().includes("svg>")) {
-        res.setHeader('content-type', 'image/svg+xml');
         res.setHeader('Cache-Control', 'no-cache');
       }
       return cb(null, body.toString());
