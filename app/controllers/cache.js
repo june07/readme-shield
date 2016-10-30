@@ -4,6 +4,8 @@ var redis = require('redis'),
 
 var cacheSingleton = module.exports = (function() {  
   var instance;
+  // Not sure what to replace redis.print() with as I don't want the logging output and yet the method seems to need a function passed in, so...
+  var printReplacement = function() {};
 
   function createInstance() {
 		var redisClient = redis.createClient(config.redis.url);
@@ -14,13 +16,11 @@ var cacheSingleton = module.exports = (function() {
 			redis: redisClient,
 			putCache: function(shield) {
 				var id = JSON.stringify(shield.coder)+" "+shield.repo;
-				var changesString = shield.changes.toString();
-				redisClient.hset(id, "branches", shield.branches.toString(), redis.print);
-				redisClient.hset(id, "changes", changesString, redis.print);
-				redisClient.hset(id, "badge", JSON.stringify(shield.badge), redis.print);
-				redisClient.hset(id, "provider", JSON.stringify(shield.provider), redis.print);
-				redisClient.hset(id, "markdown", shield.markdown, redis.print);
-				redisClient.hset(id, "changed", shield.changed, redis.print)
+				redisClient.hset(id, "branches", shield.branches.toString(), printReplacement);
+				redisClient.hset(id, "badge", JSON.stringify(shield.badge), printReplacement);
+				redisClient.hset(id, "provider", JSON.stringify(shield.provider), printReplacement);
+				redisClient.hset(id, "markdown", shield.markdown, printReplacement);
+				redisClient.hset(id, "different", shield.different, printReplacement);
 			},
 			getCache: function(shield, callback) {
 				redisClient.hgetall(shield.id, function(err, reply) {
@@ -32,8 +32,8 @@ var cacheSingleton = module.exports = (function() {
 						var badge = JSON.parse(reply.badge);
 						var provider = JSON.parse(reply.provider);
 						var markdown = reply.markdown;
-						var changed = reply.changed;
-						callback(null, shield.update(coder, repo, badge, provider, markdown, changed));
+						var different = reply.different;
+						callback(null, shield.update(coder, repo, badge, provider, markdown, different));
 					}
 					else callback(null, null);
 				});

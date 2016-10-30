@@ -51,7 +51,7 @@ server.on('uncaughtException', function (req, res, route, err) {
   res.end();
 });
 
-server.on('after', restify.auditLogger({log: log}));
+//server.on('after', restify.auditLogger({log: log}));
 
 models();
 routes(server);

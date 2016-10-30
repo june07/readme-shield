@@ -17,7 +17,6 @@ module.exports = function (server) {
       repo = sanitize(req.params.repo, "repo");
     shieldController.getShield(coder, repo, null, null, [], function(err, shield) {
       if (err) { console.log(err.message); return next(); }
-      console.dir(shield);
       if (shield)
         res.send(200, shield.markdown);
       return next();

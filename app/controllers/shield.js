@@ -1,5 +1,4 @@
-var diff = require("diff"),
-	npm = require("npm"),
+var npm = require("npm"),
 	https = require('https'),
 	path = require('path'),
 	Promise = require('bluebird'),
@@ -77,39 +76,12 @@ var ShieldController = (function() {
 			isDifferent: function(shield, resolve, reject) {
 				var github = shield.readme["github"];
 				var npm = shield.readme["npm"];
-				var change = false;
-				var difference = diff.diffLines(github, npm);
-				var diffs = []; /** [ { num: 1, added: "+changeObject.value", removed: "-changeObject.value"},
-				  														{ num: 2, added: "+changeObject.value", removed: "-changeObject.value"}, ... ] */
-				var BadgeChanges = function(shield) {
-					changes: null,			// the number of changes that exist currently
-					commits: null,			// the number of commits since last current
-					date: null;		// date of last change
-					diffs: [];
-					function compare() {
-							if (! shield.changes.includes(diffs.toString()) && diffs.length > 0) {
-							}
-				}
-		  	difference.forEach(function(changeObject, i) {
-		  		// For every line difference
-		  		var line = {};
-		  		if (changeObject.added || changeObject.removed)
-		  			line.num = i;
-		  		if (changeObject.added)
-		  			line.added = "+"+changeObject.value;
-		  		if (changeObject.removed)
-		  			line.removed = "-"+changeObject.value;
-		  		if (changeObject.added || changeObject.removed)
-		  			diffs.push(JSON.stringify(line));
-		  	});
-				if (! shield.changes.includes(diffs.toString()) && diffs.length > 0) {
-					shield.updateDiffs(diffs);	
-					cache.putCache(shield);	
+				var different = (! (github.includes(npm) && npm.includes(github)));
+				if (different) {
+					cache.putCache(shield.update(null, null, null, null, null, different));	
 				}
 				resolve(shield);
 			},
-			updateShield: function() {},
-			/** Returns null, branch(string), npmReadme(string) */
 			getGitHubReadme: function(shield) {
 				var self = this;
 				return new Promise(function(resolve, reject) {
@@ -163,9 +135,8 @@ var ShieldController = (function() {
 				var subject = 'npm README',
 					status = 'unknown',
 					color = 'lightgrey';
-				if (shield.changed) {
-					shield.changed = false;
-					status = (shield.changes.length > 1) ? 'Behind '+shield.changes.length+' changes.': 'Behind '+shield.changes.length+' change.';
+				if (shield.different) {
+					status = 'Behind GitHub',
 					color = 'yellow';
 				} else {
 					status = 'Current!',
@@ -182,10 +153,11 @@ var ShieldController = (function() {
 			},
 			httpGet: function(url, cb) {
 				var url;
-				var headers = { 'Cache-Control':'no-cache' };
+				var headers = { 'Cache-Control':'no-cache, no-store, must-revalidate' }; 
 				Object.assign(url, headers);
-				https.get(url, (res) => {
-				  console.log(`Got response: ${res.statusCode}`);
+				https.get(url + '?nocache=' + Date.now(), (res) => {
+				  //console.log(`Got response: ${res.statusCode}`);
+				  //console.dir(res.headers);
 				  // Return false and try the next GitHub branch
 				  // consume response body
 				  var body = '';
